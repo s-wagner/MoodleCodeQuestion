@@ -11,8 +11,9 @@ jobs:
         V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" version.php | cut -d "'" -f2)
         NV=$(echo $N"_"$V)
-        echo $("var_name="$NV) >> $GITHUB_ENV
+        echo $(echo "varName="$NV) >> $GITHUB_ENV
   show_vars:
+    needs: create_vars
     runs-on: ubuntu-latest
     steps:
      - run: |
