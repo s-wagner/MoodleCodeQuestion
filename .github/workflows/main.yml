@@ -15,7 +15,3 @@ jobs:
        uses: montudor/action-zip@v1
        with:
         args: zip -qq -r ${{ env.NV }} .
-     - uses: actions/upload-artifact@v3
-       with:
-        name: ${{ env.NV }}
-    
