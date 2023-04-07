@@ -10,9 +10,7 @@ jobs:
        run: |
         V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" version.php | cut -d "'" -f2)
-        NV=$(echo $N"_"$V)
-        echo $(echo \""var_name="$NV\") >> $GITHUB_ENV
+        echo "NV=$(echo $N"_"$V)" >> $GITHUB_ENV
      - name: show vars
-       run: |
-        echo $var_name
+       run: echo ${{ env.NV }}
     
