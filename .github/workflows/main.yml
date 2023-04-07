@@ -1,0 +1,16 @@
+on:
+  push:
+jobs:
+  create_vars:
+    runs-on: ubuntu-latest
+    steps:
+     - run: |
+        V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
+        N=$(grep "component" version.php | cut -d "'" -f2)
+        NV=$(echo $N"_"$V)
+        echo $("var_name="$NV) >> $GITHUB_ENV
+  show_vars:
+    runs-on: ubuntu-latest
+    steps:
+     - run: |
+        echo "${{ env.var_name }}"
