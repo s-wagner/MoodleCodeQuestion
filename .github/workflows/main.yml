@@ -10,7 +10,11 @@ jobs:
         V=$(grep "plugin->version" code/version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" code/version.php | cut -d "'" -f2)
         echo "NV=$(echo $N"_"$V".zip")" >> $GITHUB_ENV
+     - name: temp solution
+       run: |
+        mkdir code1
+        mv code code1
      - uses: actions/upload-artifact@v3
        with:
         name: ${{ env.NV }}
-        path: ./code
+        path: ./code1
