@@ -10,11 +10,7 @@ jobs:
         V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" version.php | cut -d "'" -f2)
         echo "NV=$(echo $N"_"$V".zip")" >> $GITHUB_ENV
-     - name: zip
-       uses: montudor/action-zip@v1
-       with:
-        args: zip -qq -r ${{ env.NV }} .
      - uses: actions/upload-artifact@v3
        with:
         name: ${{ env.NV }}
-        path: ./${{ env.NV }}
+        path: .
