@@ -4,8 +4,10 @@ jobs:
   create_vars:
     runs-on: ubuntu-latest
     steps:
-     - run: |
-        ls -l
+     - name: checkout
+       uses: actions/checkout@v2.3.4
+     - name: craete variables
+       run: |
         V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" version.php | cut -d "'" -f2)
         NV=$(echo $N"_"$V)
