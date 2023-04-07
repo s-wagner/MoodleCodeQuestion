@@ -4,8 +4,8 @@ jobs:
   create_zip:
     runs-on: ubuntu-latest
     steps:
+     - uses: actions/checkout@v3
      - name: create vars
-       uses: actions/checkout@v3
      - name: craete variables
        run: |
         V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
@@ -15,4 +15,7 @@ jobs:
        uses: montudor/action-zip@v1
        with:
         args: zip -qq -r ${{ env.NV }} .
+     - uses: actions/upload-artifact@v3
+       with:
+        name: ${{ env.NV }}
     
