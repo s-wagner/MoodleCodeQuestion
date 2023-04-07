@@ -7,8 +7,8 @@ jobs:
      - uses: actions/checkout@v3
      - name: craete variables
        run: |
-        V=$(grep "plugin->version" version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
-        N=$(grep "component" version.php | cut -d "'" -f2)
+        V=$(grep "plugin->version" code/version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
+        N=$(grep "component" code/version.php | cut -d "'" -f2)
         echo "NV=$(echo $N"_"$V".zip")" >> $GITHUB_ENV
      - uses: actions/upload-artifact@v3
        with:
