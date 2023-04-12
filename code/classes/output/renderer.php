@@ -178,11 +178,11 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
-        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'visibility:hidden'));
+        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'display:none'));
         $output .= html_writer::div(null, null, array('id' => 'containerMonaco', 'style' => 'width:800px;height:600px;border:1px solid grey'));
-        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'visibility:hidden'));
-        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'visibility:hidden'));
-        $output .= html_writer::tag('p', $step->get_qt_var($name), array('id' => 'textMonaco', 'style' => 'visibility:hidden'));
+        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'display:none'));
+        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'display:none'));
+        $output .= html_writer::tag('p', s($step->get_qt_var($name)), array('id' => 'textMonaco', 'style' => 'display:none'));
         return $output;
     }
 
@@ -198,13 +198,13 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
-        $output .= $this->textarea($step->get_qt_var($name), 0, ['name' => $inputname, 'id' => $id, 'style' => 'visibility:hidden;']);
-        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'visibility:hidden'));
+        $output .= $this->textarea($step->get_qt_var($name), 0, ['name' => $inputname, 'id' => $id, 'style' => 'display:none']);
+        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'display:none'));
         $output .= html_writer::div(null, null, array('id' => 'containerMonaco', 'style' => 'width:615px;height:600px;border:1px solid grey'));
-        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'visibility:hidden'));
-        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'visibility:hidden'));
-        $output .= html_writer::tag('p', $id, array('id' => 'monacoID', 'style' => 'visibility:hidden'));
-        $output .= html_writer::tag('p', $step->get_qt_var($name), array('id' => 'textMonaco', 'style' => 'visibility:hidden'));
+        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'display:none'));
+        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'display:none'));
+        $output .= html_writer::tag('p', $id, array('id' => 'monacoID', 'style' => 'display:none'));
+        $output .= html_writer::tag('p', s($step->get_qt_var($name)), array('id' => 'textMonaco', 'style' => 'display:none'));
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $inputname . 'format', 'value' => FORMAT_PLAIN]);
 
         return $output;

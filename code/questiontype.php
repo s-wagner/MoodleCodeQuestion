@@ -48,7 +48,7 @@ class qtype_code extends question_type {
             'plaintext' => get_string('languageplaintext', 'qtype_code'),
             'c' => get_string('languagec', 'qtype_code'),
             'cpp' => get_string('languagecpp', 'qtype_code'),
-            'chsarp' => get_string('languagechsarp', 'qtype_code'),
+            'csharp' => get_string('languagechsarp', 'qtype_code'),
             'css' => get_string('languagecss', 'qtype_code'),
             'dockerfile' => get_string('languagedockerfile', 'qtype_code'),
             'html' => get_string('languagehtml', 'qtype_code'),
