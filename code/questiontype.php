@@ -105,6 +105,11 @@ class qtype_code extends question_type {
         $DB->update_record('qtype_code_options', $options);
     }
 
+    public function response_file_areas() {
+        return array('answer');
+    }
+
+
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $question->language = $questiondata->options->language;

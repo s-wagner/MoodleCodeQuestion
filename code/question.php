@@ -37,15 +37,6 @@ class qtype_code_question extends question_with_responses {
     public $language;
 
     /**
-     * Returns data to be included in the form submission.
-     *
-     * @return array|string.
-     */
-    public function get_expected_data() {
-        return array();
-    }
-
-    /**
      * Returns the data that would need to be submitted to get a correct answer.
      *
      * @return array|null Null if it is not possible to compute a correct response.
@@ -74,31 +65,34 @@ class qtype_code_question extends question_with_responses {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
+    public function get_expected_data() {
+        $expecteddata = array('answer' => PARAM_RAW);
+        return $expecteddata;
+    }
+
     public function is_complete_response(array $response) {
         return true;
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
-        return true;
+        return false;
     }
 
     public function summarise_response(array $response) {
         $output = null;
 
         if (isset($response['answer'])) {
-            $output .= question_utils::to_plain_text($response['answer'],
-                $response['answerformat'], array('para' => false));
+            $output .= $response['answer'];
         }
 
-        if (isset($response['attachments'])  && $response['attachments']) {
-            $attachedfiles = [];
-            foreach ($response['attachments']->get_files() as $file) {
-                $attachedfiles[] = $file->get_filename() . ' (' . display_size($file->get_filesize()) . ')';
-            }
-            if ($attachedfiles) {
-                $output .= get_string('attachedfiles', 'qtype_code', implode(', ', $attachedfiles));
-            }
-        }
         return $output;
+    }
+
+    public function un_summarise_response(string $summary) {
+        if (empty($summary)) {
+            return [];
+        }
+        
+        return ['answer' => $summary, 'answerformat' => FORMAT_PLAIN];
     }
 }

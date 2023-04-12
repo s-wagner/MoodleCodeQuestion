@@ -58,7 +58,7 @@ class qtype_code_edit_form extends question_edit_form {
 
         $question->responsetemplate = array(
             'text' => $question->options->responsetemplate,
-            'format' => 'test',
+            'format' => 'plain',
         );
 
         return $question;

@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['answertext'] = 'Answer text';
 $string['pluginname'] = 'Code';
 $string['pluginname_link'] = 'question/type/code';
 $string['pluginnameadding'] = 'Adding a Code question';
