@@ -41,8 +41,9 @@ class qtype_code_edit_form extends question_edit_form {
         $mform->setDefault('language', 'plaintext');
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_code'));
-        $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_code'),
-                array('rows' => 10), $this->editoroptions);
+        $mform->addElement('textarea', 'responsetemplate', get_string("responsetemplate", "qtype_code"), 'wrap="virtual" rows="20" cols="50"');
+        //$mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_code'),
+        //        array('rows' => 10), $this->editoroptions);
         $mform->setType('responsetemplate', PARAM_TEXT);
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_code');
     }

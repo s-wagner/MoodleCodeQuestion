@@ -49,22 +49,6 @@ class qtype_code_question extends question_with_responses {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
     }
 
-
-    /**
-     * Checks whether the user is allowed to be served a particular file.
-     *
-     * @param question_attempt $qa The question attempt being displayed.
-     * @param question_display_options $options The options that control display of the question.
-     * @param string $component The name of the component we are serving files for.
-     * @param string $filearea The name of the file area.
-     * @param array $args the Remaining bits of the file path.
-     * @param bool $forcedownload Whether the user must be forced to download the file.
-     * @return bool True if the user can access this file.
-     */
-    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
-    }
-
     public function get_expected_data() {
         $expecteddata = array('answer' => PARAM_RAW);
         return $expecteddata;
@@ -92,7 +76,7 @@ class qtype_code_question extends question_with_responses {
         if (empty($summary)) {
             return [];
         }
-        
+
         return ['answer' => $summary, 'answerformat' => FORMAT_PLAIN];
     }
 }

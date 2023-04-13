@@ -24,6 +24,8 @@
 
 use tool_usertours\output\step;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Generates the output for code questions.
  *
@@ -54,13 +56,14 @@ class qtype_code_renderer extends qtype_renderer {
             // Question has never been answered, fill it with response template.
             $step = new question_attempt_step(array('answer' => $question->responsetemplate));
         }
+
         if (empty($options->readonly)) {
             $answer = $responseoutput->response_area_input('answer', $qa, $step, $options->context);
-
+            $edit = true;
         } else {
             $answer = $responseoutput->response_area_read_only('answer', $qa,
                     $step, $options->context);
-            
+            $edit = false;
         }
 
         $result = '';
@@ -70,35 +73,22 @@ class qtype_code_renderer extends qtype_renderer {
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
         $result .= html_writer::end_tag('div');
+
+        $inputname = $qa->get_qt_field_name('answer');
+        $id = $inputname . '_id';
+        $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
+        $url2 = new moodle_url('/question/type/code/monaco-editor/min/vs');
+        $this->page->requires->js_call_amd('qtype_code/monaco', 'init', [[
+            'lang' => $qa->get_question()->language,
+            'url1' => $url1->__toString(),
+            'url2' => $url2->__toString(),
+            'text' => s($step->get_qt_var('answer')),
+            'mID' => $id,
+            'edit' => $edit,
+        ]]);
+
         return $result;
-        //return parent::formulation_and_controls($qa, $options);
     }
-
-   
-    /**
-     * Generate the specific feedback. This is feedback that varies according to
-     * the response the student gave. This method is only called if the display options
-     * allow this to be shown.
-     *
-     * @param question_attempt $qa the question attempt to display.
-     * @return string HTML fragment.
-     */
-    protected function specific_feedback(question_attempt $qa) {
-        return parent::specific_feedback($qa);
-    }
-
-    /**
-     * Generates an automatic description of the correct response to this question.
-     * Not all question types can do this. If it is not possible, this method
-     * should just return an empty string.
-     *
-     * @param question_attempt $qa the question attempt to display.
-     * @return string HTML fragment.
-     */
-    protected function correct_response(question_attempt $qa) {
-        return parent::correct_response($qa);
-    }
-
 
 }
 
@@ -133,7 +123,7 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
      * @param object $context the context teh output belongs to.
      * @return string html to display the response.
      */
-    public abstract function response_area_read_only($name, question_attempt $qa,
+    abstract public function response_area_read_only($name, question_attempt $qa,
             question_attempt_step $step, $context);
 
     /**
@@ -145,17 +135,17 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
      * @param object $context the context teh output belongs to.
      * @return string html to display the response for editing.
      */
-    public abstract function response_area_input($name, question_attempt $qa,
+    abstract public function response_area_input($name, question_attempt $qa,
             question_attempt_step $step, $context);
 
     /**
      * @return string specific class name to add to the input element.
      */
-    protected abstract function class_name();
+    abstract protected function class_name();
 }
 
 class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
-    
+
     /**
      * @return string the HTML for the textarea.
      */
@@ -172,39 +162,23 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
 
     public function response_area_read_only($name, $qa, $step, $context) {
         $id = $qa->get_qt_field_name($name) . '_id';
-        $this->page->requires->js(new moodle_url('/question/type/code/view.js'));
-        $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
-        $url2 = new moodle_url('/question/type/code/monaco-editor/min/vs');
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
-        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'display:none'));
-        $output .= html_writer::div(null, null, array('id' => 'containerMonaco', 'style' => 'width:800px;height:600px;border:1px solid grey'));
-        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'display:none'));
-        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'display:none'));
-        $output .= html_writer::tag('p', s($step->get_qt_var($name)), array('id' => 'textMonaco', 'style' => 'display:none'));
+        $output .= html_writer::div(null, null,
+            array('id' => 'containerMonaco'. $id, 'style' => 'width:auto;height:600px;border:1px solid grey'));
         return $output;
     }
 
     public function response_area_input($name, $qa, $step, $context) {
-        $this->page->requires->js(new moodle_url('/question/type/code/edit.js'));
-        $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
-        $url2 = new moodle_url('/question/type/code/monaco-editor/min/vs');
-
-        
-
         $inputname = $qa->get_qt_field_name($name);
         $id = $inputname . '_id';
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
         $output .= $this->textarea($step->get_qt_var($name), 0, ['name' => $inputname, 'id' => $id, 'style' => 'display:none']);
-        $output .= html_writer::tag('p', $qa->get_question()->language, array('id' => 'languageMonaco', 'style' => 'display:none'));
-        $output .= html_writer::div(null, null, array('id' => 'containerMonaco', 'style' => 'width:615px;height:600px;border:1px solid grey'));
-        $output .= html_writer::tag('p', $url1, array('id' => 'urlM1', 'style' => 'display:none'));
-        $output .= html_writer::tag('p', $url2, array('id' => 'urlM2', 'style' => 'display:none'));
-        $output .= html_writer::tag('p', $id, array('id' => 'monacoID', 'style' => 'display:none'));
-        $output .= html_writer::tag('p', s($step->get_qt_var($name)), array('id' => 'textMonaco', 'style' => 'display:none'));
+        $output .= html_writer::div(null, null,
+            array('id' => 'containerMonaco'. $id, 'style' => 'width:auto;height:600px;border:1px solid grey'));
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $inputname . 'format', 'value' => FORMAT_PLAIN]);
 
         return $output;

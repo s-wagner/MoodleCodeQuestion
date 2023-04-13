@@ -101,7 +101,7 @@ class qtype_code extends question_type {
         }
 
         $options->language = $formdata->language;
-        $options->responsetemplate = $formdata->responsetemplate['text'];
+        $options->responsetemplate = $formdata->responsetemplate;
         $DB->update_record('qtype_code_options', $options);
     }
 
