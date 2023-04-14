@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+
+/**
+ * Upgrade code for qtype_code
+ *
+ * @package     qtype_code
+ * @copyright   2023 Stefan Wagner
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Upgrade function
+ *
+ * @param int $oldversion old version
+ * @return void
+ */
 function xmldb_qtype_code_upgrade($oldversion) {
 
     global $CFG, $DB;
@@ -44,4 +60,30 @@ function xmldb_qtype_code_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023040701, 'qtype', 'code');
     }
 
+    if ($oldversion < 2023041400) {
+        // Define field intellisense to be added to qtype_code_options.
+        $table = new xmldb_table('qtype_code_options');
+        $field = new xmldb_field('intellisense', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '2', 'responsetemplate');
+
+        // Conditionally launch add field intellisense.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Code savepoint reached.
+        upgrade_plugin_savepoint(true, 2023041400, 'qtype', 'code');
+    }
+
+    if ($oldversion < 2023041401) {
+
+        // Changing type of field intellisense on table qtype_code_options to text.
+        $table = new xmldb_table('qtype_code_options');
+        $field = new xmldb_field('intellisense', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'responsetemplate');
+
+        // Launch change of type for field intellisense.
+        $dbman->change_field_type($table, $field);
+
+        // Code savepoint reached.
+        upgrade_plugin_savepoint(true, 2023041401, 'qtype', 'code');
+    }
 }

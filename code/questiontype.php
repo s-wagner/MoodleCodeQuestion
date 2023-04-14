@@ -36,13 +36,20 @@ require_once($CFG->libdir.'/questionlib.php');
  */
 class qtype_code extends question_type {
 
-    // Override functions as necessary from the parent class located at
-    // /question/type/questiontype.php.
-
+    /**
+     * Sets that this question is manual graded
+     *
+     * @return boolean
+     */
     public function is_manual_graded() {
         return true;
     }
 
+    /**
+     * Defines all programming languages supported by this question type
+     *
+     * @return array
+     */
     public function languages() {
         return array(
             'plaintext' => get_string('languageplaintext', 'qtype_code'),
@@ -76,6 +83,25 @@ class qtype_code extends question_type {
         );
     }
 
+    /**
+     * Provides intellisense options
+     *
+     * @return array
+     */
+    public function intellisense () {
+        return array(
+            '0' => get_string('int_none', 'qtype_code'),
+            '1' => get_string('int_some', 'qtype_code'),
+            '2' => get_string('int_all', 'qtype_code')
+        );
+    }
+
+    /**
+     * Get options for specific code question
+     *
+     * @param question $question current question
+     * @return object
+     */
     public function get_question_options($question) {
         global $DB;
         $question->options = $DB->get_record('qtype_code_options',
@@ -83,11 +109,24 @@ class qtype_code extends question_type {
         parent::get_question_options($question);
     }
 
+    /**
+     * Saves default option values for new question
+     *
+     * @param stdClass $fromform form object
+     * @return void
+     */
     public function save_defaults_for_new_questions(stdClass $fromform): void {
         parent::save_defaults_for_new_questions($fromform);
         $this->set_default_value('language', 'plaintext');
+        $this->set_default_value('intellisense', '2');
     }
 
+    /**
+     * Saves option values for new question
+     *
+     * @param object $formdata form object
+     * @return void
+     */
     public function save_question_options($formdata) {
         global $DB;
         $context = $formdata->context;
@@ -97,25 +136,46 @@ class qtype_code extends question_type {
             $options = new stdClass();
             $options->questionid = $formdata->id;
             $options->language = '';
+            $options->intellisense = '';
             $options->id = $DB->insert_record('qtype_code_options', $options);
         }
 
         $options->language = $formdata->language;
         $options->responsetemplate = $formdata->responsetemplate;
+        $options->intellisense = $formdata->intellisense;
         $DB->update_record('qtype_code_options', $options);
     }
 
+    /**
+     * Defines all repsone fields
+     *
+     * @return array
+     */
     public function response_file_areas() {
         return array('answer');
     }
 
-
+    /**
+     * Initialses a new question instance
+     *
+     * @param question_definition $question question definition
+     * @param object $questiondata object contains question options
+     * @return void
+     */
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $question->language = $questiondata->options->language;
         $question->responsetemplate = $questiondata->options->responsetemplate;
+        $question->intellisense = $questiondata->options->intellisense;
     }
 
+    /**
+     * Deletes a question from the DB
+     *
+     * @param int $questionid id of question to be deleted
+     * @param int $contextid the context this quesiotn belongs to.
+     * @return void
+     */
     public function delete_question($questionid, $contextid) {
         global $DB;
 

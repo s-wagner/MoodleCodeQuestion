@@ -25,29 +25,40 @@
 /**
  * code question editing form defition.
  *
- * You should override functions as necessary from the parent class located at
- * /question/type/edit_question_form.php.
  */
 class qtype_code_edit_form extends question_edit_form {
 
+    /**
+     * Generates the input form for qtype_code options
+     *
+     * @param object $mform form object
+     * @return void
+     */
     protected function definition_inner($mform) {
         $qtype = question_bank::get_qtype('code');
 
         $mform->addElement('header', 'responseoptions', get_string('responseoptions', 'qtype_code'));
         $mform->setExpanded('responseoptions');
 
-        $mform->addElement('select', 'language',
-                get_string('languages', 'qtype_code'), $qtype->languages());
+        $mform->addElement('select', 'language', get_string('languages', 'qtype_code'), $qtype->languages());
         $mform->setDefault('language', 'plaintext');
 
+        $mform->addElement('select', 'intellisense', get_string('intellisense', 'qtype_code'), $qtype->intellisense());
+        $mform->setDefault('intellisense', '2');
+
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_code'));
-        $mform->addElement('textarea', 'responsetemplate', get_string("responsetemplate", "qtype_code"), 'wrap="virtual" rows="20" cols="50"');
-        //$mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_code'),
-        //        array('rows' => 10), $this->editoroptions);
+        $mform->addElement('textarea', 'responsetemplate', get_string("responsetemplate", "qtype_code"),
+            'wrap="virtual" rows="20" cols="50"');
         $mform->setType('responsetemplate', PARAM_TEXT);
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_code');
     }
 
+    /**
+     * Processes input form data
+     *
+     * @param question $question new question
+     * @return question
+     */
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
 
@@ -57,10 +68,9 @@ class qtype_code_edit_form extends question_edit_form {
 
         $question->language = $question->options->language;
 
-        $question->responsetemplate = array(
-            'text' => $question->options->responsetemplate,
-            'format' => 'plain',
-        );
+        $question->responsetemplate = $question->options->responsetemplate;
+
+        $question->intellisense = $question->options->intellisense;
 
         return $question;
     }

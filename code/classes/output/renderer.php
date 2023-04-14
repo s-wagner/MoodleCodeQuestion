@@ -22,6 +22,7 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_availability\tree;
 use tool_usertours\output\step;
 
 defined('MOODLE_INTERNAL') || die();
@@ -74,6 +75,24 @@ class qtype_code_renderer extends qtype_renderer {
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
         $result .= html_writer::end_tag('div');
 
+        switch($qa->get_question()->intellisense){
+            case '0':
+                $fields = false;
+                $functions = false;
+                break;
+            case '1':
+                $fields = true;
+                $functions = false;
+                break;
+            case '2':
+                $fields = true;
+                $functions = true;
+                break;
+            default:
+                $fields = false;
+                $functions = false;
+        }
+
         $inputname = $qa->get_qt_field_name('answer');
         $id = $inputname . '_id';
         $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
@@ -85,6 +104,8 @@ class qtype_code_renderer extends qtype_renderer {
             'text' => s($step->get_qt_var('answer')),
             'mID' => $id,
             'edit' => $edit,
+            'fields' => $fields,
+            'functions' => $functions,
         ]]);
 
         return $result;
@@ -94,8 +115,7 @@ class qtype_code_renderer extends qtype_renderer {
 
 
 /**
- * A base class to abstract out the differences between different type of
- * response format.
+ * A base class to abstract out the differences between different type of response format.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -119,7 +139,6 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
      * @param string $name the variable name this input edits.
      * @param question_attempt $qa the question attempt being display.
      * @param question_attempt_step $step the current step.
-     * @param int $lines approximate size of input box to display.
      * @param object $context the context teh output belongs to.
      * @return string html to display the response.
      */
@@ -131,7 +150,6 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
      * @param string $name the variable name this input edits.
      * @param question_attempt $qa the question attempt being display.
      * @param question_attempt_step $step the current step.
-     * @param int $lines approximate size of input box to display.
      * @param object $context the context teh output belongs to.
      * @return string html to display the response for editing.
      */
@@ -139,15 +157,26 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
             question_attempt_step $step, $context);
 
     /**
+     * The class name
      * @return string specific class name to add to the input element.
      */
     abstract protected function class_name();
 }
 
+
+/**
+ * A class for printing the necessary html tags for the monaco editor.
+ *
+ */
 class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
 
     /**
-     * @return string the HTML for the textarea.
+     * Generates textarea for input
+     *
+     * @param string $response response of student
+     * @param int $lines number of lines the textarea should have
+     * @param array $attributes different attributes for textarea
+     * @return void
      */
     protected function textarea($response, $lines, $attributes) {
         $attributes['class'] = $this->class_name() . ' qtype_code_response form-control';
@@ -156,10 +185,24 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
         return html_writer::tag('textarea', s($response), $attributes);
     }
 
+
+    /**
+     * The class name
+     * @return string the name of the class
+     */
     protected function class_name() {
-        return 'qtype_code_plain';
+        return 'qtype_code_monaco';
     }
 
+
+    /**
+     * Render the students respone when the question is in read-only mode.
+     * @param string $name the variable name this input edits.
+     * @param question_attempt $qa the question attempt being display.
+     * @param question_attempt_step $step the current step.
+     * @param object $context the context the output belongs to.
+     * @return string html to display the response.
+     */
     public function response_area_read_only($name, $qa, $step, $context) {
         $id = $qa->get_qt_field_name($name) . '_id';
 
@@ -170,6 +213,14 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
         return $output;
     }
 
+    /**
+     * Render the students respone.
+     * @param string $name the variable name this input edits.
+     * @param question_attempt $qa the question attempt being display.
+     * @param question_attempt_step $step the current step.
+     * @param object $context the context the output belongs to.
+     * @return string html to display the response for editing.
+     */
     public function response_area_input($name, $qa, $step, $context) {
         $inputname = $qa->get_qt_field_name($name);
         $id = $inputname . '_id';

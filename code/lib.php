@@ -18,16 +18,16 @@
  * Serve question type files
  *
  * @since      Moodle 2.0
- * @package    qtype_essay
+ * @package    qtype_code
  * @copyright  Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
- * Checks file access for essay questions.
+ * Checks file access for code questions.
  *
- * @package  qtype_essay
+ * @package  qtype_code
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object

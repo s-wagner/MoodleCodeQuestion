@@ -23,18 +23,26 @@
  */
 
 
-// For a complete list of base question classes please examine the file
-// /question/type/questionbase.php.
-//
-// Make sure to implement all the abstract methods of the base class.
-
 /**
  * Class that represents a code question.
  */
 class qtype_code_question extends question_with_responses {
 
+
+    /**
+     * @var array contains response template
+     */
     public $responsetemplate;
+
+    /**
+     * @var string programming language to be used for question
+     */
     public $language;
+
+    /** 
+     * @var string the level of intellisense
+     */
+    public $intellisense;
 
     /**
      * Returns the data that would need to be submitted to get a correct answer.
@@ -45,23 +53,55 @@ class qtype_code_question extends question_with_responses {
         return null;
     }
 
+    /**
+     * Sets the behaviour of the question
+     *
+     * @param question_attempt $qa current question_attempt
+     * @param string $preferredbehaviour prefred behaviour
+     * @return question_behaviour
+     */
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
     }
 
+
+    /**
+     * Returns the expected data fields
+     *
+     * @return array
+     */
     public function get_expected_data() {
         $expecteddata = array('answer' => PARAM_RAW);
         return $expecteddata;
     }
 
+    /**
+     * Checks if the response is complete
+     *
+     * @param array $response current response
+     * @return boolean
+     */
     public function is_complete_response(array $response) {
         return true;
     }
 
+    /**
+     * Checks if two responses are the same
+     *
+     * @param array $prevresponse previous response
+     * @param array $newresponse new response
+     * @return boolean
+     */
     public function is_same_response(array $prevresponse, array $newresponse) {
         return false;
     }
 
+    /**
+     * Summarises the response
+     *
+     * @param array $response current response
+     * @return string
+     */
     public function summarise_response(array $response) {
         $output = null;
 
@@ -72,6 +112,12 @@ class qtype_code_question extends question_with_responses {
         return $output;
     }
 
+    /**
+     * Unsummarises the response
+     *
+     * @param string $summary summary of response
+     * @return array
+     */
     public function un_summarise_response(string $summary) {
         if (empty($summary)) {
             return [];
