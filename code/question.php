@@ -39,10 +39,45 @@ class qtype_code_question extends question_with_responses {
      */
     public $language;
 
-    /** 
-     * @var string the level of intellisense
+    /**
+     * @var integer 0 or 1 enbales intellisense
      */
-    public $intellisense;
+    public int $intel;
+
+    /**
+     * @var integer 0 or 1 enables inline intellisense
+     */
+    public int $inline;
+
+    /**
+     * @var integer 0 or 1 enables auto complete for keywords
+     */
+    public int $keywords;
+
+    /**
+     * @var integer 0 or 1 enables auto complete for language specific variables
+     */
+    public int $variables;
+
+    /**
+     * @var integer 0 or 1 enables auto complete for functions
+     */
+    public int $functions;
+
+    /**
+     * @var integer 0 or 1 enables auto complete for classes
+     */
+    public int $classes;
+
+    /**
+     * @var integer 0 or 1 enables auto complete for modules
+     */
+    public int $modules;
+
+    /**
+     * @var integer size of tabs in monaco editor
+     */
+    public int $tabsize;
 
     /**
      * Returns the data that would need to be submitted to get a correct answer.
@@ -82,7 +117,7 @@ class qtype_code_question extends question_with_responses {
      * @return boolean
      */
     public function is_complete_response(array $response) {
-        return true;
+        return array_key_exists('answer', $response) && ($response['answer'] !== '');
     }
 
     /**
@@ -93,7 +128,17 @@ class qtype_code_question extends question_with_responses {
      * @return boolean
      */
     public function is_same_response(array $prevresponse, array $newresponse) {
-        return false;
+        if (array_key_exists('answer', $prevresponse) && $prevresponse['answer'] !== $this->responsetemplate) {
+            $value1 = (string) $prevresponse['answer'];
+        } else {
+            $value1 = '';
+        }
+        if (array_key_exists('answer', $newresponse) && $newresponse['answer'] !== $this->responsetemplate) {
+            $value2 = (string) $newresponse['answer'];
+        } else {
+            $value2 = '';
+        }
+        return $value1 === $value2;
     }
 
     /**

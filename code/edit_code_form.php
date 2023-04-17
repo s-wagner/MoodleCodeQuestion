@@ -43,8 +43,32 @@ class qtype_code_edit_form extends question_edit_form {
         $mform->addElement('select', 'language', get_string('languages', 'qtype_code'), $qtype->languages());
         $mform->setDefault('language', 'plaintext');
 
-        $mform->addElement('select', 'intellisense', get_string('intellisense', 'qtype_code'), $qtype->intellisense());
-        $mform->setDefault('intellisense', '2');
+        $mform->addElement('advcheckbox', 'intel', get_string('intel', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+
+        $mform->addElement('advcheckbox', 'inline', get_string('enableinline', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+        $mform->addElement('advcheckbox', 'keywords', get_string('enablekeywords', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+        $mform->addElement('advcheckbox', 'variables', get_string('enablevars', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+        $mform->addElement('advcheckbox', 'functions', get_string('enablefunctions', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+        $mform->addElement('advcheckbox', 'classes', get_string('enableclasses', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+        $mform->addElement('advcheckbox', 'modules', get_string('enablemodules', 'qtype_code'),
+            'Label displayed after checkbox', null, array(0, 1));
+
+        $mform->disabledIf('inline', 'intel', 'eq', '0');
+        $mform->disabledIf('keywords', 'intel', 'eq', '0');
+        $mform->disabledIf('variables', 'intel', 'eq', '0');
+        $mform->disabledIf('functions', 'intel', 'eq', '0');
+        $mform->disabledIf('classes', 'intel', 'eq', '0');
+        $mform->disabledIf('modules', 'intel', 'eq', '0');
+
+        $tabsizeoptions = ['size' => '1', 'maxlength' => '1'];
+        $mform->addElement('text', 'tabsize', get_string('tabsize', 'qtype_code'), $tabsizeoptions);
+        $mform->setType('tabsize', PARAM_TEXT);
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_code'));
         $mform->addElement('textarea', 'responsetemplate', get_string("responsetemplate", "qtype_code"),
@@ -70,9 +94,42 @@ class qtype_code_edit_form extends question_edit_form {
 
         $question->responsetemplate = $question->options->responsetemplate;
 
-        $question->intellisense = $question->options->intellisense;
+        $question->intel = $question->options->intel;
+
+        $question->inline = $question->options->inline;
+
+        $question->keywords = $question->options->keywords;
+
+        $question->variables = $question->options->variables;
+
+        $question->functions = $question->options->functions;
+
+        $question->classes = $question->options->classes;
+
+        $question->modules = $question->options->modules;
+
+        $question->tabsize = $question->options->tabsize;
 
         return $question;
+    }
+
+    /**
+     * Validates form input
+     *
+     * @param object $fromform form object
+     * @param object $files input files
+     * @return array errors
+     */
+    public function validation($fromform, $files) {
+        $errors = parent::validation($fromform, $files);
+
+        if (!is_numeric($fromform['tabsize'])) {
+            $errors['tabsize'] = get_string('err_numeric', 'form');
+        } else if ($fromform['tabsize'] <= 0) {
+            $errors['tabsize'] = get_string('err_tabsizenegative', 'qtype_code');
+        }
+
+        return $errors;
     }
 
     /**

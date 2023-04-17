@@ -84,19 +84,6 @@ class qtype_code extends question_type {
     }
 
     /**
-     * Provides intellisense options
-     *
-     * @return array
-     */
-    public function intellisense () {
-        return array(
-            '0' => get_string('int_none', 'qtype_code'),
-            '1' => get_string('int_some', 'qtype_code'),
-            '2' => get_string('int_all', 'qtype_code')
-        );
-    }
-
-    /**
      * Get options for specific code question
      *
      * @param question $question current question
@@ -136,13 +123,27 @@ class qtype_code extends question_type {
             $options = new stdClass();
             $options->questionid = $formdata->id;
             $options->language = '';
-            $options->intellisense = '';
+            $options->inline = 0;
+            $options->keywords = 0;
+            $options->variables = 0;
+            $options->functions = 0;
+            $options->classes = 0;
+            $options->modules = 0;
+            $options->tabsize = 4;
             $options->id = $DB->insert_record('qtype_code_options', $options);
         }
 
         $options->language = $formdata->language;
         $options->responsetemplate = $formdata->responsetemplate;
         $options->intellisense = $formdata->intellisense;
+        $options->inline = $formdata->inline;
+        $options->keywords = $formdata->keywords;
+        $options->variables = $formdata->variables;
+        $options->functions = $formdata->functions;
+        $options->classes = $formdata->classes;
+        $options->modules = $formdata->modules;
+        $options->intel = $formdata->intel;
+        $options->tabsize = $formdata->tabsize;
         $DB->update_record('qtype_code_options', $options);
     }
 
@@ -167,6 +168,14 @@ class qtype_code extends question_type {
         $question->language = $questiondata->options->language;
         $question->responsetemplate = $questiondata->options->responsetemplate;
         $question->intellisense = $questiondata->options->intellisense;
+        $question->intel = $questiondata->options->intel;
+        $question->inline = $questiondata->options->inline;
+        $question->keywords = $questiondata->options->keywords;
+        $question->variables = $questiondata->options->variables;
+        $question->functions = $questiondata->options->functions;
+        $question->classes = $questiondata->options->classes;
+        $question->modules = $questiondata->options->modules;
+        $question->tabsize = $questiondata->options->tabsize;
     }
 
     /**

@@ -86,4 +86,84 @@ function xmldb_qtype_code_upgrade($oldversion) {
         // Code savepoint reached.
         upgrade_plugin_savepoint(true, 2023041401, 'qtype', 'code');
     }
+
+    if ($oldversion < 2023041700) {
+
+        // Define field responsetemplate to be dropped from qtype_code_options.
+        $table = new xmldb_table('qtype_code_options');
+        $field = new xmldb_field('intellisense');
+
+        // Conditionally launch drop field responsetemplate.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        $field = new xmldb_field('inline', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'responsetemplate');
+
+        // Conditionally launch add field inline.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('keywords', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'inline');
+
+        // Conditionally launch add field keywords.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('variables', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'keywords');
+
+        // Conditionally launch add field variables.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('functions', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'variables');
+
+        // Conditionally launch add field functions.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('classes', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'functions');
+
+        // Conditionally launch add field clases.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('modules', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'classes');
+
+        // Conditionally launch add field modules.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('intel', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'modules');
+
+        // Conditionally launch add field intel.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Code savepoint reached.
+        upgrade_plugin_savepoint(true, 2023041700, 'qtype', 'code');
+    }
+
+    if ($oldversion < 2023041701) {
+
+        // Define field tabsize to be added to qtype_code_options.
+        $table = new xmldb_table('qtype_code_options');
+        $field = new xmldb_field('tabsize', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '4', 'intel');
+
+        // Conditionally launch add field tabsize.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Code savepoint reached.
+        upgrade_plugin_savepoint(true, 2023041701, 'qtype', 'code');
+    }
+
 }

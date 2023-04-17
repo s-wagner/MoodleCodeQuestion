@@ -74,25 +74,54 @@ class qtype_code_renderer extends qtype_renderer {
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
         $result .= html_writer::end_tag('div');
+        $result .= html_writer::tag('button', get_string('format', 'qtype_code'), array('id' => 'formater', 'type' => 'button'));
 
-        switch($qa->get_question()->intellisense){
-            case '0':
-                $fields = false;
-                $functions = false;
-                break;
-            case '1':
-                $fields = true;
-                $functions = false;
-                break;
-            case '2':
-                $fields = true;
+        if ($qa->get_question()->intel == 1) {
+            $intel = true;
+            if ($qa->get_question()->inline == 1) {
+                $inline = true;
+            } else {
+                $inline = false;
+            }
+
+            if ($qa->get_question()->keywords == 1) {
+                $keywords = true;
+            } else {
+                $keywords = false;
+            }
+
+            if ($qa->get_question()->variables == 1) {
+                $variables = true;
+            } else {
+                $variables = false;
+            }
+
+            if ($qa->get_question()->functions == 1) {
                 $functions = true;
-                break;
-            default:
-                $fields = false;
+            } else {
                 $functions = false;
-        }
+            }
 
+            if ($qa->get_question()->classes == 1) {
+                $classes = true;
+            } else {
+                $classes = false;
+            }
+
+            if ($qa->get_question()->modules == 1) {
+                $modules = true;
+            } else {
+                $modules = false;
+            }
+        } else {
+            $intel = false;
+            $inline = false;
+            $keywords = false;
+            $variables = false;
+            $functions = false;
+            $classes = false;
+            $modules = false;
+        }
         $inputname = $qa->get_qt_field_name('answer');
         $id = $inputname . '_id';
         $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
@@ -104,15 +133,20 @@ class qtype_code_renderer extends qtype_renderer {
             'text' => s($step->get_qt_var('answer')),
             'mID' => $id,
             'edit' => $edit,
-            'fields' => $fields,
+            'intel' => $intel,
+            'inline' => $inline,
+            'keywords' => $keywords,
+            'variables' => $variables,
             'functions' => $functions,
+            'classes' => $classes,
+            'modules' => $modules,
+            'tabsize' => $qa->get_question()->tabsize,
         ]]);
 
         return $result;
     }
 
 }
-
 
 /**
  * A base class to abstract out the differences between different type of response format.
