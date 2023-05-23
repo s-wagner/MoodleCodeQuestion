@@ -30,10 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Generates the output for code questions.
  *
- * You should override functions as necessary from the parent class located at
- * /question/type/rendererbase.php.
  */
-class qtype_code_renderer extends qtype_renderer {
+class qtype_code_renderer extends qtype_renderer
+{
 
     /**
      * Generates the display of the formulation part of the question. This is the
@@ -45,7 +44,8 @@ class qtype_code_renderer extends qtype_renderer {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
      */
-    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options)
+    {
         global $CFG;
         $question = $qa->get_question();
 
@@ -58,25 +58,31 @@ class qtype_code_renderer extends qtype_renderer {
             $step = new question_attempt_step(array('answer' => $question->responsetemplate));
         }
 
-        if (empty($options->readonly)) {
+        if (empty($options->readonly)) { //Student answers the question
             $answer = $responseoutput->response_area_input('answer', $qa, $step, $options->context);
             $edit = true;
-        } else {
-            $answer = $responseoutput->response_area_read_only('answer', $qa,
-                    $step, $options->context);
+        } else { //Student views question after completing the test or the teacher grades the question
+            $answer = $responseoutput->response_area_read_only(
+                'answer',
+                $qa,
+                $step,
+                $options->context
+            );
             $edit = false;
         }
 
         $result = '';
-        $result .= html_writer::tag('div', $question->format_questiontext($qa),
-                array('class' => 'qtext'));
+        $result .= html_writer::tag( //Prints the question text
+            'div',
+            $question->format_questiontext($qa),
+            array('class' => 'qtext')
+        );
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
         $result .= html_writer::end_tag('div');
-        $result .= html_writer::tag('button', get_string('format', 'qtype_code'), array('id' => 'formater', 'type' => 'button'));
 
-        if ($qa->get_question()->intel == 1) {
+        if ($qa->get_question()->intel == 1) { //Sets bools for the different types of autocomplete, moodle db only knows int so a workaround was needed
             $intel = true;
             if ($qa->get_question()->inline == 1) {
                 $inline = true;
@@ -124,37 +130,36 @@ class qtype_code_renderer extends qtype_renderer {
         }
         $inputname = $qa->get_qt_field_name('answer');
         $id = $inputname . '_id';
-        $url1 = new moodle_url('/question/type/code/monaco-editor/min/vs/loader.js');
-        $url2 = new moodle_url('/question/type/code/monaco-editor/min/vs');
-        $this->page->requires->js_call_amd('qtype_code/monaco', 'init', [[
-            'lang' => $qa->get_question()->language,
-            'url1' => $url1->__toString(),
-            'url2' => $url2->__toString(),
-            'text' => s($step->get_qt_var('answer')),
-            'mID' => $id,
-            'edit' => $edit,
-            'intel' => $intel,
-            'inline' => $inline,
-            'keywords' => $keywords,
-            'variables' => $variables,
-            'functions' => $functions,
-            'classes' => $classes,
-            'modules' => $modules,
-            'tabsize' => $qa->get_question()->tabsize,
-        ]]);
+
+        //workaround so a single js file could be used. all data needed for the editor is printed in invisible p tags
+        $result .= html_writer::tag('p', $qa->get_question()->language, ['id' => 'lang', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', s($step->get_qt_var('answer')), ['id' => 'text', 'style' => 'display:none']);
+        $result .= html_writer::tag('p', $id, ['id' => 'mId', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $edit, ['id' => 'edit', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $intel, ['id' => 'intel', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $inline, ['id' => 'inline', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $keywords, ['id' => 'keywords', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $variables, ['id' => 'variables', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $functions, ['id' => 'functions', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $classes, ['id' => 'classes', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $modules, ['id' => 'modules', 'style' => 'display:none']); 
+        $result .= html_writer::tag('p', $qa->get_question()->tabsize, ['id' => 'tabsize', 'style' => 'display:none']);
+
+        $url3 = new moodle_url('/question/type/code/dist/app.js');//url pointing to the js file containing the monaco editor and the language client
+
+        $result .= '<script type="module" src="' .  $url3->__toString() . '"></script>'; 
 
         return $result;
     }
-
 }
 
+
 /**
- * A base class to abstract out the differences between different type of response format.
+ * A class for printing the necessary html tags for the monaco editor.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
+class qtype_code_monaco_renderer extends plugin_renderer_base
+{
 
     /** @var question_display_options Question display options instance for any necessary information for rendering the question. */
     protected $displayoptions;
@@ -164,45 +169,10 @@ abstract class qtype_code_format_renderer_base extends plugin_renderer_base {
      *
      * @param question_display_options $displayoptions
      */
-    public function set_displayoptions(question_display_options $displayoptions): void {
+    public function set_displayoptions(question_display_options $displayoptions): void
+    {
         $this->displayoptions = $displayoptions;
     }
-
-    /**
-     * Render the students respone when the question is in read-only mode.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt $qa the question attempt being display.
-     * @param question_attempt_step $step the current step.
-     * @param object $context the context teh output belongs to.
-     * @return string html to display the response.
-     */
-    abstract public function response_area_read_only($name, question_attempt $qa,
-            question_attempt_step $step, $context);
-
-    /**
-     * Render the students respone when the question is in read-only mode.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt $qa the question attempt being display.
-     * @param question_attempt_step $step the current step.
-     * @param object $context the context teh output belongs to.
-     * @return string html to display the response for editing.
-     */
-    abstract public function response_area_input($name, question_attempt $qa,
-            question_attempt_step $step, $context);
-
-    /**
-     * The class name
-     * @return string specific class name to add to the input element.
-     */
-    abstract protected function class_name();
-}
-
-
-/**
- * A class for printing the necessary html tags for the monaco editor.
- *
- */
-class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
 
     /**
      * Generates textarea for input
@@ -212,7 +182,8 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
      * @param array $attributes different attributes for textarea
      * @return void
      */
-    protected function textarea($response, $lines, $attributes) {
+    protected function textarea($response, $lines, $attributes)
+    {
         $attributes['class'] = $this->class_name() . ' qtype_code_response form-control';
         $attributes['rows'] = $lines;
         $attributes['cols'] = 60;
@@ -224,7 +195,8 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
      * The class name
      * @return string the name of the class
      */
-    protected function class_name() {
+    protected function class_name()
+    {
         return 'qtype_code_monaco';
     }
 
@@ -237,13 +209,17 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
      * @param object $context the context the output belongs to.
      * @return string html to display the response.
      */
-    public function response_area_read_only($name, $qa, $step, $context) {
+    public function response_area_read_only($name, $qa, $step, $context)
+    {
         $id = $qa->get_qt_field_name($name) . '_id';
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
-        $output .= html_writer::div(null, null,
-            array('id' => 'containerMonaco'. $id, 'style' => 'width:auto;height:600px;border:1px solid grey'));
+        $output .= html_writer::div(
+            null, //empty div for the monaco editor
+            null,
+            array('id' => 'containerMonaco' . $id, 'style' => 'width:auto;height:600px;border:1px solid grey')
+        );
         return $output;
     }
 
@@ -255,18 +231,22 @@ class qtype_code_monaco_renderer extends qtype_code_format_renderer_base {
      * @param object $context the context the output belongs to.
      * @return string html to display the response for editing.
      */
-    public function response_area_input($name, $qa, $step, $context) {
+    public function response_area_input($name, $qa, $step, $context)
+    {
         $inputname = $qa->get_qt_field_name($name);
         $id = $inputname . '_id';
 
         $responselabel = $this->displayoptions->add_question_identifier_to_label(get_string('answertext', 'qtype_code'));
         $output = html_writer::tag('label', $responselabel, ['class' => 'sr-only', 'for' => $id]);
-        $output .= $this->textarea($step->get_qt_var($name), 0, ['name' => $inputname, 'id' => $id, 'style' => 'display:none']);
-        $output .= html_writer::div(null, null,
-            array('id' => 'containerMonaco'. $id, 'style' => 'width:auto;height:600px;border:1px solid grey'));
+        //textarea to use the moodle autosave feature. text typed in the editor is written to the invisible text field
+        $output .= $this->textarea($step->get_qt_var($name), 0, ['name' => $inputname, 'id' => $id, 'style' => 'display:none']); 
+        $output .= html_writer::div(
+            null,
+            null,
+            array('id' => 'containerMonaco' . $id, 'style' => 'width:auto;height:600px;border:1px solid grey')
+        );
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $inputname . 'format', 'value' => FORMAT_PLAIN]);
 
         return $output;
     }
-
 }
