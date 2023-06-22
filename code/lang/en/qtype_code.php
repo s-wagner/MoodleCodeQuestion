@@ -39,6 +39,7 @@ $string['responseoptions'] = 'Response options';
 $string['languages'] = 'Programming Language';
 $string['languageplaintext'] = 'Plaintext';
 $string['languagec'] = 'C';
+$string['languagecss'] = 'CSS';
 $string['languagecpp'] = 'C++';
 $string['languagechsarp'] = 'C#';
 $string['languagedockerfile'] = 'Dockerfile';

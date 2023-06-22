@@ -1,0 +1,37 @@
+!SESSION 2023-04-19 11:58:02.857 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=17.0.6
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en
+Command-line arguments:  -data C:Usersp61580DesktopData
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 11:58:04.063
+!MESSAGE class org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin is started
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 11:58:04.222
+!MESSAGE Main thread is waiting
+!SESSION 2023-04-19 12:13:23.860 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=17.0.6
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en
+Command-line arguments:  -data C:Usersp61580DesktopData
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 12:13:24.779
+!MESSAGE class org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin is started
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 12:13:24.932
+!MESSAGE Main thread is waiting
+!SESSION 2023-04-19 12:31:45.521 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=17.0.6
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en
+Framework arguments:  --lsp.port=5007
+Command-line arguments:  --lsp.port=5007 -data C:Usersp61580DesktopData
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 12:31:46.444
+!MESSAGE class org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin is started
+
+!ENTRY org.eclipse.jdt.ls.core 1 0 2023-04-19 12:31:46.591
+!MESSAGE Main thread is waiting

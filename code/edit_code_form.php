@@ -44,20 +44,20 @@ class qtype_code_edit_form extends question_edit_form {
         $mform->setDefault('language', 'plaintext');
 
         $mform->addElement('advcheckbox', 'intel', get_string('intel', 'qtype_code'), //checkbox to enable autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
 
         $mform->addElement('advcheckbox', 'inline', get_string('enableinline', 'qtype_code'), //checkbox to enable inline documentation
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
         $mform->addElement('advcheckbox', 'keywords', get_string('enablekeywords', 'qtype_code'), //checkbox to enable keyword autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
         $mform->addElement('advcheckbox', 'variables', get_string('enablevars', 'qtype_code'), //checkbox to enable variable autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
         $mform->addElement('advcheckbox', 'functions', get_string('enablefunctions', 'qtype_code'), //checkbox to enable function autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
         $mform->addElement('advcheckbox', 'classes', get_string('enableclasses', 'qtype_code'), //checkbox to enable class autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
         $mform->addElement('advcheckbox', 'modules', get_string('enablemodules', 'qtype_code'), //checkbox to enable module autocomplete
-            'Label displayed after checkbox', null, array(0, 1));
+            '', null, array(0, 1));
 
         //disables all autocomplete checkboxes if autocomplete is disabled
         $mform->disabledIf('inline', 'intel', 'eq', '0');  
@@ -70,10 +70,11 @@ class qtype_code_edit_form extends question_edit_form {
         $tabsizeoptions = ['size' => '1', 'maxlength' => '1'];
         $mform->addElement('text', 'tabsize', get_string('tabsize', 'qtype_code'), $tabsizeoptions); //set the tabulator size
         $mform->setType('tabsize', PARAM_TEXT);
+        $mform->setDefault('tabsize', '2');
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_code'));
         $mform->addElement('textarea', 'responsetemplate', get_string("responsetemplate", "qtype_code"), //set the response template
-            'wrap="virtual" rows="20" cols="50"');
+            'wrap="virtual" rows="20" cols="50" style="font-family: monospace, monospace;"');
         $mform->setType('responsetemplate', PARAM_TEXT);
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_code');
     }
