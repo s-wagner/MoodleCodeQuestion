@@ -9,7 +9,7 @@ jobs:
        run: |
         V=$(grep "plugin->version" code/version.php | cut -d '=' -f2 | cut -d ' ' -f2 | cut -d ';' -f1)
         N=$(grep "component" code/version.php | cut -d "'" -f2)
-        echo "NV=$(echo $N"_"$V".zip")" >> $GITHUB_ENV
+        echo "NV=$(echo $N"_"$V)" >> $GITHUB_ENV
      - name: temp solution
        run: |
         mkdir code1
