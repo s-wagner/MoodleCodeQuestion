@@ -18,7 +18,6 @@ function sanitizeText(txt) {
     txt = txt.replaceAll('ä', 'ae');
     txt = txt.replaceAll('ö', 'oe');
     txt = txt.replaceAll('ü', 'ue');
-    //txt = txt.replaceAll('\"', '\'');
     return txt;
 }
 
@@ -29,11 +28,8 @@ function getLocalDirectory() {
 
 
 var jsonParser = json();
-// create the express application
 const app = express();
-// server the static content, i.e. index.html
 app.use(express.static(getLocalDirectory()));
-// start the server
 const server = app.listen(3001);
 
 const app2 = express();

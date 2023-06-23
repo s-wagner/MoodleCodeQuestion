@@ -18,7 +18,6 @@ function sanitizeText(txt) {
     txt = txt.replaceAll('ä', 'ae');
     txt = txt.replaceAll('ö', 'oe');
     txt = txt.replaceAll('ü', 'ue');
-    //txt = txt.replaceAll('\"', '\'');
     return txt;
 }
 
